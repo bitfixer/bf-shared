@@ -377,8 +377,25 @@ void Image::initWithFile(FILE *fp)
         pixels = new Pixel[width*height];
         
         unsigned char* pixels = (unsigned char*)malloc(sizeof(unsigned char) * width * height * 3);
-        fread(pixels, 1, width * height * 3, fp);
-        
+        if (maxval <= 255) {
+            fread(pixels, 1, width * height * 3, fp);
+        } else {
+            unsigned char* px = pixels;
+            uint16_t r,g,b;
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    fread(&r, 2, 1, fp);
+                    fread(&g, 2, 1, fp);
+                    fread(&b, 2, 1, fp);
+                    
+                    px[0] = r >> 8;
+                    px[1] = g >> 8;
+                    px[2] = b >> 8;
+                    px += 3;
+                }
+            }
+        }
+            
         initWithData(pixels, width*3, 3, 0, 1, 2);
         free(pixels);
     }
