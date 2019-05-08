@@ -7,7 +7,7 @@
 //
 
 #include "Ditherer.hpp"
-//#include "C64Image.hpp"
+#include "C64Image.hpp"
 #include <stdio.h>
 #include <stdlib.h>
 #include <vector>
@@ -126,7 +126,6 @@ Image* NearestNeighborDitherer::createDitheredImageFromImageWithPalette(const Im
     return dImage;
 }
 
-/*
 class C64Ditherer : public Ditherer
 {
 public:
@@ -245,19 +244,16 @@ void C64Ditherer::processRow(C64Image* image, int blockWidth, int blockHeight, i
      
     delete fsDitherer;
 }
-*/
 
 Ditherer* Ditherer::createFloydSteinbergDitherer()
 {
     return new FloydSteinbergDitherer();
 }
 
-/*
 Ditherer* Ditherer::createC64Ditherer()
 {
     return new C64Ditherer();
 }
-*/
 
 Ditherer* Ditherer::createNearestNeighborDitherer()
 {
