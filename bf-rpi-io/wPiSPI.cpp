@@ -14,10 +14,12 @@
 class WiringPiSPIImpl : public WiringPiSPI
 {
 public:
-    WiringPiSPIImpl()
-    : _spi(-1)
+    WiringPiSPIImpl(int channel, GPIO* gpio, int cs)
+    : _spi(channel)
     , _buffer(NULL)
     , _bufferSize(0)
+    , _gpio(gpio)
+    , _cs(cs)
     {
     }
     
@@ -31,7 +33,8 @@ public:
     
     void write(uint8_t byte)
     {
-        wiringPiSPIDataRW(0, &byte, 1);
+        //wiringPiSPIDataRW(_spi, &byte, 1);
+        spiwrite(&byte, 1);
     }
     
     void write(uint8_t* buffer, int size)
@@ -48,22 +51,49 @@ public:
         }
         
         memcpy(_buffer, buffer, size);
-        int ret = wiringPiSPIDataRW(0, _buffer, size);
+        //int ret = wiringPiSPIDataRW(_spi, _buffer, size);
+        int ret = spiwrite(_buffer, size);
         printf("SPI wrote %d\n", ret);
     }
     
     void set_clock_hz(int hz)
     {
-        wiringPiSPISetup(0, hz);
+        wiringPiSPISetup(_spi, hz);
+        if (_gpio != NULL && _cs >= 0)
+        {
+            _gpio->setup(_cs, GPIO::OUT);
+            _gpio->set_high(_cs);
+        }
     }
     
 private:
     int _spi;
     uint8_t* _buffer;
     int _bufferSize;
+    GPIO* _gpio;
+    int _cs;
+
+    int spiwrite(unsigned char* data, int size)
+    {
+        if (_gpio != NULL && _cs >= 0)
+        {
+            _gpio->set_low(_cs);
+        }
+        int ret = wiringPiSPIDataRW(_spi, data, size);
+        if (_gpio != NULL && _cs >= 0)
+        {
+            _gpio->set_high(_cs);
+        }
+        return ret;
+    }
 };
 
-SPI* WiringPiSPI::NewWiringPiSPI()
+SPI* WiringPiSPI::NewWiringPiSPI(int channel)
 {
-    return new WiringPiSPIImpl();
+    return new WiringPiSPIImpl(channel, NULL, -1);
+}
+
+SPI* WiringPiSPI::NewWiringPiSPI(int channel, GPIO* gpio, int cs)
+{
+    return new WiringPiSPIImpl(channel, gpio, cs);
 }
