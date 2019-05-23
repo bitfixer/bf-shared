@@ -38,6 +38,11 @@ public:
     {
         digitalWrite(pin, HIGH);
     }
+
+    int read(int pin)
+    {
+        return digitalRead(pin);
+    }
 };
 
 GPIO* WiringPiGPIO::NewWiringPiGPIO()

@@ -17,6 +17,7 @@
 #define __bf_spi_h__
 
 #include <stdint.h>
+#include "bf-gpio.h"
 
 class SPI {
 public:
@@ -25,6 +26,7 @@ public:
     virtual void write(uint8_t byte) = 0;
     virtual void write(uint8_t* buffer, int size) = 0;
     virtual void set_clock_hz(int hz) = 0;
+    virtual void set_chipselect(GPIO* gpio, int cs) = 0;
 };
 
 #endif

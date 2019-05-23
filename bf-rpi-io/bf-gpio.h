@@ -24,10 +24,11 @@ public:
         IN = 0,
         OUT = 1
     } DIR;
-    
+
     virtual void setup(int pin, DIR direction) = 0;
     virtual void set_low(int pin) = 0;
     virtual void set_high(int pin) = 0;
+    virtual int read(int pin) = 0;
 };
 
 #endif

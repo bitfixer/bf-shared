@@ -33,7 +33,6 @@ public:
     
     void write(uint8_t byte)
     {
-        //wiringPiSPIDataRW(_spi, &byte, 1);
         spiwrite(&byte, 1);
     }
     
@@ -51,14 +50,23 @@ public:
         }
         
         memcpy(_buffer, buffer, size);
-        //int ret = wiringPiSPIDataRW(_spi, _buffer, size);
         int ret = spiwrite(_buffer, size);
-        printf("SPI wrote %d\n", ret);
     }
     
     void set_clock_hz(int hz)
     {
         wiringPiSPISetup(_spi, hz);
+        if (_gpio != NULL && _cs >= 0)
+        {
+            _gpio->setup(_cs, GPIO::OUT);
+            _gpio->set_high(_cs);
+        }
+    }
+
+    void set_chipselect(GPIO* gpio, int cs)
+    {
+        _gpio = gpio;
+        _cs = cs;
         if (_gpio != NULL && _cs >= 0)
         {
             _gpio->setup(_cs, GPIO::OUT);
