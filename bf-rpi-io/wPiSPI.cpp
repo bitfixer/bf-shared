@@ -10,12 +10,14 @@
 #include "wiringPiSPI.h"
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 class WiringPiSPIImpl : public WiringPiSPI
 {
 public:
     WiringPiSPIImpl(int channel, GPIO* gpio, int cs)
     : _spi(channel)
+    , _fd(-1)
     , _buffer(NULL)
     , _bufferSize(0)
     , _gpio(gpio)
@@ -53,9 +55,15 @@ public:
         int ret = spiwrite(_buffer, size);
     }
     
+    void read(uint8_t* buffer, int size)
+    {
+        ::read(_fd, buffer, size);
+    }
+
     void set_clock_hz(int hz)
     {
-        wiringPiSPISetup(_spi, hz);
+        _fd = wiringPiSPISetup(_spi, hz);
+        printf("spi %d fd %d\n", _spi, _fd);
         if (_gpio != NULL && _cs >= 0)
         {
             _gpio->setup(_cs, GPIO::OUT);
@@ -76,6 +84,7 @@ public:
     
 private:
     int _spi;
+    int _fd;
     uint8_t* _buffer;
     int _bufferSize;
     GPIO* _gpio;

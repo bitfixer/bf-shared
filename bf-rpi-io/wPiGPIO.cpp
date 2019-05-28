@@ -6,6 +6,7 @@
 //  Copyright © 2018 Michael Hill. All rights reserved.
 //
 
+#include <stdio.h>
 #include "wPiGPIO.h"
 #include "wiringPi.h"
 
@@ -21,7 +22,9 @@ public:
     {
         if (direction == DIR::IN)
         {
+            printf("set %d to %d\n", pin, direction);
             pinMode(pin, INPUT);
+            pullUpDnControl(pin, PUD_DOWN);
         }
         else
         {
