@@ -5,7 +5,7 @@ class Printer
 {
 public:
     virtual void print(const char* string) = 0;
-    virtual int tick() = 0;
+    virtual int tick(float seconds) = 0;
 };
 
 #endif
