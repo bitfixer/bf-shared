@@ -714,3 +714,16 @@ void Image::writePPM(FILE *fp)
     }
 }
 
+// write out image 
+void Image::writeRawMono(FILE* fp)
+{
+    for (int hh = 0; hh < height; hh++)
+    {
+        for (int ww = 0; ww < width; ww++)
+        {
+            Pixel* p = pixelAt(ww, hh);
+            unsigned char clr = (unsigned char)(p->rgb[0] * 255.0);
+            fwrite(&clr, 1, 1, fp);
+        }
+    }
+}
