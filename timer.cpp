@@ -33,34 +33,28 @@ private:
     high_resolution_clock::time_point startTime;
 };
 
-Timer::Timer()
-: _timerImpl(NULL)
+Timer* Timer::createTimer()
 {
+    return new TimerImpl();
 }
 
-Timer::~Timer()
+Timer* _singletonTimer = NULL;
+
+void Timer::startProgramTimer()
 {
-    if (_timerImpl)
+    if (_singletonTimer == NULL)
     {
-        delete _timerImpl;
-        _timerImpl = NULL;
+        _singletonTimer = createTimer();
     }
+    _singletonTimer->start();
 }
 
-void Timer::start()
+unsigned int Timer::millis()
 {
-    if (!_timerImpl)
-    {
-        _timerImpl = new TimerImpl();
-    }
-    _timerImpl->start();
+    return _singletonTimer->getTime() * 1000.0;
 }
 
-double Timer::getTime()
+unsigned int Timer::micros()
 {
-    if (_timerImpl)
-    {
-        return _timerImpl->getTime();
-    }
-    return 0.0;
+    return _singletonTimer->getTime() * 1000000.0;
 }

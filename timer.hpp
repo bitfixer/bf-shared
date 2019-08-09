@@ -14,12 +14,13 @@ namespace Tools
     class Timer
     {
     public:
-        Timer();
-        ~Timer();
-        virtual void start();
-        virtual double getTime();
-    private:
-        Timer* _timerImpl;
+        static Timer* createTimer();
+        virtual void start() = 0;
+        virtual double getTime() = 0;
+
+        static void startProgramTimer();
+        static unsigned int millis();
+        static unsigned int micros();
     };
 }
 
